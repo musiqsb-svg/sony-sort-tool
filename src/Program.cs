@@ -1,23 +1,22 @@
 ﻿using System;
+using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 
-[assembly: AssemblyTitle("소니정리툴")]
-[assembly: AssemblyProduct("소니정리툴")]
-[assembly: AssemblyDescription("소니 카메라 영상·사진을 촬영일별 폴더로 정리")]
-[assembly: AssemblyCompany("이중필름")]
+[assembly: AssemblyTitle(SonySortTool.Product.Name)]
+[assembly: AssemblyProduct(SonySortTool.Product.Name)]
+[assembly: AssemblyDescription("소니 카메라 영상·사진을 촬영일별 폴더로 정리 (Sony 정식 프로그램이 아닌 개인 제작)")]
+[assembly: AssemblyCompany(SonySortTool.Product.Publisher)]
 [assembly: AssemblyCopyright("Copyright © 2026 이중필름")]
-[assembly: AssemblyVersion("1.4.0.0")]
-[assembly: AssemblyFileVersion("1.4.0.0")]
-[assembly: AssemblyInformationalVersion("1.4")]
+[assembly: AssemblyVersion(SonySortTool.Product.Version + ".0.0")]
+[assembly: AssemblyFileVersion(SonySortTool.Product.Version + ".0.0")]
+[assembly: AssemblyInformationalVersion(SonySortTool.Product.Version)]
 
 namespace SonySortTool
 {
     static class Program
     {
-        public const string Name    = "소니정리툴";
-        public const string Version = "1.4";
-        public static string Title { get { return Name + " " + Version; } }
+        public static string Title { get { return Product.Name + " " + Product.Version; } }
 
         // 폴더 경로를 인자로 받으면 바로 미리보기 (exe 아이콘에 폴더를 끌어다 놓거나 우클릭 메뉴에서 실행)
         [STAThread]
@@ -31,9 +30,18 @@ namespace SonySortTool
             Application.Run(new MainForm(args.Length > 0 ? args[0] : null));
         }
 
+        // 오류 내용은 기록 폴더에 남겨 문의할 때 보낼 수 있게 함
         static void ShowError(Exception ex)
         {
-            MessageBox.Show("예상하지 못한 오류가 발생했습니다.\n\n" + (ex != null ? ex.Message : ""),
+            string saved = null;
+            try {
+                string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Product.Id, "logs");
+                Directory.CreateDirectory(dir);
+                saved = Path.Combine(dir, "error_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".txt");
+                File.WriteAllText(saved, Title + "\r\n" + Environment.OSVersion + "\r\n\r\n" + ex);
+            } catch (Exception) { saved = null; }
+            MessageBox.Show("예상하지 못한 오류가 발생했습니다.\n\n" + (ex != null ? ex.Message : "") +
+                            (saved != null ? "\n\n자세한 내용을 저장했습니다. 문의할 때 이 파일을 함께 보내 주세요.\n" + saved : ""),
                             Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }

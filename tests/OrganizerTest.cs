@@ -1,4 +1,4 @@
-// 소니정리툴 정리 로직 테스트 (화면 없이 Organizer만)
+// SONY 타입 정리기 정리 로직 테스트 (화면 없이 Organizer만)
 //   OrganizerTest.exe                    실제 소니 카드(ILCE-7M5) 구조를 본뜬 가짜 카드로 여러 상황 확인
 //   OrganizerTest.exe --replica <폴더>   실제 폴더의 이름·날짜·XML을 본뜬 복제본으로 확인 (원본은 건드리지 않음)
 using System;
@@ -19,6 +19,7 @@ namespace SonySortTool
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             temp  = Path.Combine(Path.GetTempPath(), "SonySortToolTest_" + Guid.NewGuid().ToString("N").Substring(0, 8));
             trash = Path.Combine(temp, "_trash");
+            Organizer.LogDir = Path.Combine(temp, "_logs");   // 실제 기록 폴더(%LOCALAPPDATA%)에 테스트 기록을 남기지 않음
             Directory.CreateDirectory(trash);
             // 실제 휴지통 대신 테스트 폴더로 옮김. 실제 휴지통처럼 못 보내면(사용 중) 조용히 남김
             Organizer.Recycler = paths => {

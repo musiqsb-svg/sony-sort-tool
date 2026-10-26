@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
-  <assemblyIdentity version="1.4.0.0" name="SonySortTool"/>
+  <assemblyIdentity version="1.5.0.0" name="SonySortTool"/>
   <!-- 관리자 권한 없이 실행 -->
   <trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
     <security>

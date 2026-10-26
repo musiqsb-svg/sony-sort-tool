@@ -176,7 +176,7 @@ namespace SonySortTool
 
             if (clips.Count + proxies.Count + photos.Count == 0) {
                 r.Error = files.Any(f => f.Name.StartsWith("DJI_", Ic))
-                    ? "DJI 카메라 파일로 보입니다. 소니정리툴은 소니 카메라 카드용입니다."
+                    ? "DJI 카메라 파일로 보입니다. SONY 타입 정리기는 소니 카메라 카드용입니다 (DJI 파일은 DJI 타입 정리기로)."
                     : "소니 카메라 영상·사진이 없습니다.\n소니 카드에서 복사한 폴더인지 확인해 주세요. 이미 정리한 폴더일 수도 있습니다.";
                 return r;
             }
@@ -571,15 +571,17 @@ namespace SonySortTool
         }
 
         // 옮긴 기록:  %LOCALAPPDATA%\SonySortTool\logs\yyyyMMdd_HHmmss.txt  "원래 위치<TAB>옮긴 위치"
+        // 테스트에서는 임시 폴더로 바꿔 끼움 (실제 기록 폴더에 테스트 기록이 쌓이지 않게)
+        internal static string LogDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SonySortTool", "logs");
+
         static void WriteLog(RunResult r)
         {
             if (r.Moved.Count == 0) return;
             try {
-                string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SonySortTool", "logs");
-                Directory.CreateDirectory(dir);
+                Directory.CreateDirectory(LogDir);
                 var sb = new StringBuilder();
                 foreach (var m in r.Moved) sb.Append(m.Source).Append('\t').Append(m.Final ?? m.Dest).Append("\r\n");
-                File.WriteAllText(Path.Combine(dir, DateTime.Now.ToString("yyyyMMdd_HHmmss", Inv) + ".txt"), sb.ToString(), new UTF8Encoding(true));
+                File.WriteAllText(Path.Combine(LogDir, DateTime.Now.ToString("yyyyMMdd_HHmmss", Inv) + ".txt"), sb.ToString(), new UTF8Encoding(true));
             } catch (Exception) { }
         }
 
