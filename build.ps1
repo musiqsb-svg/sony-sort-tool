@@ -27,7 +27,7 @@ if (-not ((Test-Path 'assets\app.ico') -and (Test-Path 'assets\setup.ico') -and 
 }
 $null = New-Item -ItemType Directory -Force 'dist', 'build', 'build\art'
 
-# ── 그림: assets\art 원본(Codex로 만든 큰 PNG)을 화면에 쓰는 크기로 줄여 넣음 (프로그램이 무거워지지 않게) ──
+# ── 그림: assets\art 원본(큰 PNG)을 화면에 쓰는 크기로 줄여 넣음 (프로그램이 무거워지지 않게) ──
 function Save-Art([string]$src, [string]$dst, [int]$w, [int]$h) {
     $img = [Drawing.Image]::FromFile((Resolve-Path $src).Path)
     try {
