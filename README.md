@@ -20,7 +20,7 @@
 </p>
 
 <p align="center">
-  <b><a href="https://github.com/musiqsb-svg/sony-sort-tool/releases/download/v1.5/SonySortTool-1.5.zip">최신 버전 내려받기 (v1.5 · zip · 425KB)</a></b>
+  <b><a href="https://github.com/musiqsb-svg/sony-sort-tool/releases/download/v1.6/SonySortTool-1.6.zip">최신 버전 내려받기 (v1.6 · zip · 425KB)</a></b>
   &nbsp;·&nbsp; <a href="https://github.com/musiqsb-svg/sony-sort-tool/releases">모든 버전</a>
   &nbsp;·&nbsp; <a href="#사용법">사용법</a>
   &nbsp;·&nbsp; <a href="#자주-묻는-질문">자주 묻는 질문</a>
@@ -96,7 +96,7 @@
 | 권한 | 관리자 권한 필요 없음. 지금 사용자 계정에만 설치 |
 | 설치 위치 | `%LOCALAPPDATA%\Programs\SonySortTool` |
 
-1. [SonySortTool-1.5.zip](https://github.com/musiqsb-svg/sony-sort-tool/releases/download/v1.5/SonySortTool-1.5.zip)을 내려받으세요. 다른 버전은 [Releases](https://github.com/musiqsb-svg/sony-sort-tool/releases)에 있습니다.
+1. [SonySortTool-1.6.zip](https://github.com/musiqsb-svg/sony-sort-tool/releases/download/v1.6/SonySortTool-1.6.zip)을 내려받으세요. 다른 버전은 [Releases](https://github.com/musiqsb-svg/sony-sort-tool/releases)에 있습니다.
 2. zip 파일의 압축을 푸세요.
 3. **SONY 타입 정리기 설치.exe**를 실행하세요.
 4. [설치하기]를 누르세요. 이전 버전이 있으면 이 버튼 이름은 [업데이트하기]입니다.
@@ -216,7 +216,7 @@ Windows 11에서는 [더 많은 옵션 표시]를 먼저 누르세요.
 내려받은 폴더에서 PowerShell을 열고 아래 명령을 실행하세요.
 
 ```powershell
-Get-FileHash .\SonySortTool-1.5.zip -Algorithm SHA256
+Get-FileHash .\SonySortTool-1.6.zip -Algorithm SHA256
 ```
 
 결과 값을 릴리스 노트의 파일 지문(SHA256)과 비교하세요. 두 값이 같으면 같은 파일입니다.

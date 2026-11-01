@@ -7,7 +7,7 @@ namespace SonySortTool
     {
         public const string Name      = "SONY 타입 정리기";        // Sony가 만든 정식 프로그램이 아님을 분명히 (1.4까지 이름: 소니정리툴)
         public const string OldName   = "소니정리툴";               // 옛 이름. 업데이트·제거할 때 옛 이름의 바로가기를 정리
-        public const string Version   = "1.5";
+        public const string Version   = "1.6";
         public const string Stage     = "베타";                     // 이름 옆 표시. 정식이면 ""
         public const string Id        = "SonySortTool";             // 실행 파일·설치 폴더·설정 폴더·우클릭 메뉴 이름
         public const string Exe       = Id + ".exe";
