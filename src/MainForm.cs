@@ -202,7 +202,7 @@ namespace SonySortTool
             var warn = new List<string>();
             var info = new List<string>();
             if (scan.NoProxy.Count > 0)
-                warn.Add(string.Format("프록시가 없는 원본 {0}개: {1}  (S&Q 슬로·퀵모션 촬영은 카메라가 프록시를 만들지 않음)",
+                warn.Add(string.Format("프록시가 없는 원본 {0}개: {1}  (120p·100p 녹화와 일부 S&Q 슬로·퀵모션 촬영은 카메라가 프록시를 만들지 않음)",
                                        scan.NoProxy.Count, ShortList(scan.NoProxy)));
             int conflicts = scan.Conflicts + (delXml ? 0 : scan.XmlConflicts);
             if (conflicts > 0)

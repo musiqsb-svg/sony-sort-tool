@@ -38,7 +38,7 @@ namespace SonySortTool
                 if (args.Length == 2 && args[0] == "--replica") Replica(args[1]);
                 else {
                     DeleteXml(); KeepXml(); XmlOnlyNoCardCleanup(); OldLayoutNoProxy(); Midnight();
-                    SecondCardSameNames(); LooseFiles(); M4rootDropped(); AvchdLeftover(); CustomTitle(); SizeFormat(); Guards();
+                    SecondCardSameNames(); LooseFiles(); M4rootDropped(); AvchdLeftover(); MxfLeftover(); CustomTitle(); SizeFormat(); Guards();
                     JunkLeftovers(); EmptyDcimOptionOff(); LockedFolder(); PrivateContents();
                 }
             } finally {
@@ -239,6 +239,27 @@ namespace SonySortTool
             Check(s.Unhandled.Count == 1 && s.Unhandled[0].EndsWith("00000.MTS"), "MTS는 정리 규칙 없는 파일로 알림");
             var r = Organizer.Run(s, true, true, true, null);
             Check(r.Kept.Contains("PRIVATE") && Exists(root, @"PRIVATE\AVCHD\BDMV\STREAM\00000.MTS"), "MTS가 든 PRIVATE는 남김");
+        }
+
+        // 업무용 MXF 영상이 섞인 카드: MXF 원본과 그 Sub 프록시는 정리하지 않음. 같은 번호의 M4ROOT 영상은 정리
+        static void MxfLeftover()
+        {
+            Console.WriteLine("[MXF 영상이 섞인 카드]");
+            string root = Dir("mxf");
+            var t = new DateTime(2026, 10, 16, 9, 0, 0);
+            Touch(Path.Combine(root, @"PRIVATE\XDROOT\Clip"), "C0001.MXF", t);                       // FX6 등
+            Touch(Path.Combine(root, @"PRIVATE\XDROOT\Sub"), "C0001S03.MP4", t);
+            Touch(Path.Combine(root, @"A001\Clip\A001C002_261016AB"), "A001C002_261016AB.mxf", t);  // 루트 폴더 이름을 바꾼 X-OCN
+            Touch(Path.Combine(root, @"A001\Sub"), "A001C002_261016ABS03.mp4", t);
+            string clip = Path.Combine(root, @"M4ROOT\CLIP");
+            Touch(clip, "C0001.MP4", t); Xml(clip, "C0001", t, false);
+            Touch(Path.Combine(root, @"M4ROOT\SUB"), "C0001S03.MP4", t);
+            var s = Organizer.Scan(root);
+            Check(s.Count(Kind.Footage) == 1 && s.Count(Kind.Proxy) == 1 && s.NoProxy.Count == 0, "M4ROOT 원본 영상·프록시만 정리 대상");
+            Check(s.Unhandled.Count == 4, "MXF 2개와 그 프록시 2개는 정리 규칙 없는 파일로 알림: " + s.Unhandled.Count);
+            var r = Organizer.Run(s, true, true, true, null);
+            Check(Exists(root, @"261016_DATA_1M\261016_Proxy\C0001_Proxy.MP4"), "M4ROOT 프록시는 정리");
+            Check(Exists(root, @"PRIVATE\XDROOT\Sub\C0001S03.MP4") && Exists(root, @"A001\Sub\A001C002_261016ABS03.mp4"), "MXF의 프록시는 제자리");
         }
 
         // 파일 이름 앞부분을 바꾼 카메라 (예: A7V_0001)도 XML·프록시 짝이 맞음

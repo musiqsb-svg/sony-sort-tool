@@ -9,7 +9,9 @@
 //  - 영상 파일명(C0001)에는 날짜가 없음. 촬영일은 짝인 XML(C0001M01.XML)의 CreationDate
 //    = 촬영 시작 시각, 카메라에 설정된 시간대 그대로. XML이 없으면 수정한 날짜(= 녹화가 끝난 시각)
 //  - 프록시는 SUB 폴더의 원본이름+S03 → 원본과 같은 날, 이름은 원본이름_Proxy
-//  - S&Q(슬로·퀵모션) 촬영은 카메라가 프록시를 만들지 않음 → XML의 RecordingMode로 알아봄
+//  - 프록시가 없는 녹화: 120p·100p, S&Q(슬로·퀵모션)는 기종에 따라 전부 또는 120fps·100fps 이상만
+//    → S&Q는 XML의 RecordingMode로 알아봄
+//  - 업무용 MXF 카드(XDROOT·CINEROOT)의 Sub\원본이름S03.MP4는 MXF 원본의 프록시 → 정리하지 않음 (원본과 갈라지지 않게)
 //  - 파일 번호가 카드·카메라마다 C0001부터 다시 시작 → 다른 카드를 같은 날짜 폴더에 넣으면 이름이 겹칠 수 있음
 //  - M4ROOT는 기종에 따라 카드 맨 위 또는 PRIVATE 안
 //  - M4ROOT\THMBNL의 JPG는 영상 썸네일 (사진 아님)
@@ -156,13 +158,24 @@ namespace SonySortTool
             var names = new HashSet<string>(files.Select(f => f.FullName), StringComparer.OrdinalIgnoreCase);
             bool sonyCard = r.SonyCard = IsSonyCard(dir);
 
+            // MXF 원본의 이름, MP4 원본의 짝 키 (프록시가 MXF 원본의 것인지 가리는 데 씀)
+            var mxfBases = new HashSet<string>(files.Where(f => f.Extension.Equals(".mxf", Ic))
+                .Select(f => Path.GetFileNameWithoutExtension(f.Name)), StringComparer.OrdinalIgnoreCase);
+            var mp4Keys = new HashSet<string>(files.Where(f => f.Extension.Equals(".mp4", Ic))
+                .Select(f => PairKey(f, Path.GetFileNameWithoutExtension(f.Name))), StringComparer.OrdinalIgnoreCase);
+
             // 1) 파일 나누기: 원본 · 프록시 · 사진 · 그 밖의 영상
             var clips = new List<FileInfo>(); var proxies = new List<FileInfo>(); var photos = new List<FileInfo>();
             foreach (var f in files) {
                 string ext = f.Extension, b = Path.GetFileNameWithoutExtension(f.Name), parent = f.Directory.Name;
                 if (ext.Equals(".mp4", Ic)) {
-                    if (b.EndsWith("S03", Ic) && (parent.Equals("SUB", Ic) || names.Contains(Path.Combine(f.DirectoryName, b.Substring(0, b.Length - 3) + ".MP4"))))
-                        proxies.Add(f);
+                    if (b.EndsWith("S03", Ic) && (parent.Equals("SUB", Ic) || names.Contains(Path.Combine(f.DirectoryName, b.Substring(0, b.Length - 3) + ".MP4")))) {
+                        string clipBase = b.Substring(0, b.Length - 3);
+                        bool mxfProxy = HasAncestor(f, "XDROOT", dir) || HasAncestor(f, "CINEROOT", dir)
+                                     || (mxfBases.Contains(clipBase) && !mp4Keys.Contains(PairKey(f, clipBase)));
+                        if (mxfProxy) r.Unhandled.Add(f.FullName);   // MXF 원본은 정리하지 않으므로 프록시도 제자리에
+                        else proxies.Add(f);
+                    }
                     else if (parent.Equals("CLIP", Ic) || names.Contains(XmlPath(f)))
                         clips.Add(f);                     // CLIP 폴더 안이거나 짝인 XML이 있어야 소니 영상
                     else r.Unhandled.Add(f.FullName);
